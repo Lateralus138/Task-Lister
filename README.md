@@ -1,6 +1,6 @@
 ## Task Lister
 
-Task Lister is a portable task manager that can be used as a alternative to the native Windows Task Manager. It is great for flash drives or disk to use on computers that have viruses that have disabled the task manager or it can be used as a lightweight alternative. It is written in AutoHotkey.
+Task Lister is a portable task manager that can be used as an alternative to the native Windows Task Manager. It is great for flash drives or disk to use on computers that have viruses that have disabled the task manager or it can be used as a lightweight alternative. It is written in AutoHotkey.
 
 ## Example Code - Getting and refreshing the task list
 
