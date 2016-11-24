@@ -138,16 +138,7 @@ RefreshList:
 						{
 							WinActivate, ahk_id %this_id%
 							GuiControl,,ComboBox1, % "|" TaskList(,,1)
-							ToolTip % "TaskList updated"
-							ttx:=window._x("ahk_id " this_id)+(E1X-2)
-							tty:=window._y("ahk_id " this_id)+(E1Y-2)
-							WinMove, ahk_class tooltips_class32, ,%ttx% ,%tty%
-							Sleep,1
-							If TT_FADE("in",32)
-								{
-									Sleep, 1000
-									TT_FADE("out",16)
-								}
+							SetTimer, TT_FADE_IN, -1
 						}
 					proc:=""
 					proc:=TaskList(,1)
@@ -157,6 +148,17 @@ RefreshList:
 			If (focus != "Edit1")
 				ControlSend, ComboBox1,{Right}, ahk_id %this_id%
 		}
+Return
+TT_FADE_IN:
+	ToolTip % "TaskList updated"
+	ttx:=window._x("ahk_id " this_id)+(E1X-2)
+	tty:=window._y("ahk_id " this_id)+(E1Y-2)
+	WinMove, ahk_class tooltips_class32, ,%ttx% ,%tty%
+	If TT_FADE("in",32)
+		SetTimer,TT_FADE_OUT,-800
+Return
+TT_FADE_OUT:
+	TT_FADE("out",16)
 Return
 FileOpen:
 	FileSelectFile,file,3, % A_WinDir "\System32"
