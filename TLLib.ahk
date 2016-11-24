@@ -154,7 +154,7 @@ TaskList(delim:="|",getArray:=0,sort:=0){
 }
 
 ;; Additional functions for tasklister
-TT_FADE(state,inc:=8,max:=255){
+TT_FADE(state,inc:=8,max:=255,win:="ahk_class tooltips_class32"){
 	c:=InStr(state,"in")?-1
 	:InStr(state,"out")?255
 	:0
@@ -163,7 +163,7 @@ TT_FADE(state,inc:=8,max:=255){
 	Loop
 		{
 			Sleep, 1
-			SetTrans("ahk_class tooltips_class32",c)
+			SetTrans(win,c)
 			If InStr(state,"in")
 				{
 					If (c >= max)
@@ -172,7 +172,7 @@ TT_FADE(state,inc:=8,max:=255){
 				}
 			Else
 				{
-					If (c <= -1)
+					If (c <= -1 && (win == "ahk_class tooltips_class32"))
 						{
 							ToolTip
 							Break
