@@ -105,6 +105,9 @@ SetTrans(win,trans){
 					,"uint",win,"uint",0
 					,"uchar",trans,"uint",2)
 }
+ProcExist(x){
+	Return WinExist("ahk_exe " x)
+}
 TaskList(delim:="|",getArray:=0,sort:=0){
 	d := delim
 	s := 4096  
@@ -221,7 +224,10 @@ WM_LBUTTONDOWN(){
 	:(MouseOver(S1X,S1Y,S1X2,S1Y2) || MouseOver(MP16X,MP16Y,MP16X2,MP16Y2))?4
 	:MouseOver(MP17X,MP17Y,MP17X2,MP17Y2)?3
 	:MouseOver(MP18X,MP18Y,MP18X2,MP18Y2)?2
+	:MouseOver(MP19X,MP19Y,MP19X2,MP19Y2)?8
 	:0
+	If (over == 8)
+		SetTimer, RestartExplorer, -500
 	If (over == 7)
 		{
 			Gui, Flash
@@ -250,6 +256,7 @@ WM_MOUSEHOVER(){
 	GetControls("Task Lister")
 	over:=MouseOver(MP17X,MP17Y,MP17X2,MP17Y2)?1
 	:MouseOver(MP18X,MP18Y,MP18X2,MP18Y2)?2
+	:MouseOver(MP19X,MP19Y,MP19X2,MP19Y2)?4
 	:MouseOver(CB1X,CB1Y,CB1X2,CB1Y2)?3
 	:0
 	If (over == 1){
@@ -258,6 +265,9 @@ WM_MOUSEHOVER(){
 	If (over == 2){
 		SetTimer,TT_OVER_2,-1250
 	}
+	If (over == 4){
+		SetTimer,TT_OVER_3,-1250
+	}	
 	If (over != 3)
 		ControlSend, ComboBox1,{Right}, ahk_id %this_id%
 	If !over {	
@@ -276,8 +286,9 @@ TT_OVER_1(){
 					If MouseOver(MP17X,MP17Y,MP17X2,MP17Y2)
 						{
 							ToolTip % "Alt+K"
-							Sleep, 3000
-							ToolTip
+							SetTimer, TT_FADE_OUT_SLOW, -3000
+							; Sleep, 3000
+							; ToolTip
 						}		
 				}
 		}
@@ -293,8 +304,27 @@ TT_OVER_2(){
 					If MouseOver(MP18X,MP18Y,MP18X2,MP18Y2)
 						{
 							ToolTip % "Alt+O"
-							Sleep, 3000
-							ToolTip
+							SetTimer, TT_FADE_OUT_SLOW, -3000
+							; Sleep, 3000
+							; ToolTip
+						}
+				}
+		}
+}
+TT_OVER_3(){
+	Global
+	If !WinExist("ahk_class tooltips_class32")
+		{
+			Static c:=0
+			GetControls("Task Lister")
+			If Mod(++c,2)
+				{
+					If MouseOver(MP19X,MP19Y,MP19X2,MP19Y2)
+						{
+							ToolTip % "Alt+R"
+							SetTimer, TT_FADE_OUT_SLOW, -3000
+							; Sleep, 3000
+							; ToolTip
 						}
 				}
 		}

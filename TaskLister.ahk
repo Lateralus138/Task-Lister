@@ -1,6 +1,11 @@
 ; List all tasks in a Gui with a ComboBox
 
 ; Init
+if not A_IsAdmin
+{
+    Run *RunAs "%A_ScriptFullPath%"
+    ExitApp
+}
 #NoEnv
 #SingleInstance, Force
 SendMode Input
@@ -10,11 +15,14 @@ OnMessage(0x18,"WM_SHOWWINDOW")
 OnMessage(0x2a3,"WM_MOUSELEAVE")
 OnMessage(0x201,"WM_LBUTTONDOWN")
 CoordMode, ToolTip, Client
+
 ; Vars
 defaultWidth:=240
+x:="explorer.exe"
 
 ; Build menus, intial loops and guis here
 Menu, MainMenu, Add, &Run,FileOpen, +Break
+Menu, MainMenu, Add, Restart &Explorer,RestartExplorer
 Menu, MainMenu, Add, E&xit,GuiClose
 Menu, HelpMenu, Add, &Help,Help, +Break
 Menu, HelpMenu, Add, &About,About
@@ -25,6 +33,7 @@ Menu, Tray, NoStandard
 Menu, Tray, Tip, % Spaces("Tab") Spaces("Tab") "Task Lister`nRight click for menu"
 Menu, Tray, Add, &Run, FileOpen
 Menu, Tray, Add, &Help, Help
+Menu, Tray, Add, Restart &Explorer,RestartExplorer
 Menu, Tray, Add, &About Task Lister, About
 Menu, Tray, Add
 Menu, Tray, Add, E&xit,GuiClose
@@ -46,6 +55,7 @@ Gui, Font, s9 w400
 Gui, Add, ComboBox, xs  Choose1 vChoice w%defaultWidth% 0x1 h250 +ReadOnly, % tl
 Button("0x0D4F82","0x0078D7",defaultWidth,"&Kill Selected Task","Task Lister","FEFEFA",13)
 Button("0x0D4F82","0x0078D7",defaultWidth,"&Open Process Location`n(If possible)","Task Lister","FEFEFA",13)
+Button("0x0D4F82","0x0078D7",defaultWidth,"&Restart Explorer","Task Lister","FEFEFA",13)
 Gui, Show, , Task Lister
 WinSet, TransColor, 0x123456 , Task Lister
 Gui, -Caption +Border
@@ -61,8 +71,8 @@ SetTimer,RefreshList, 150
 Return
 
 ; Hotkeys
-!r::Reload
 #IfWinActive, Task Lister
+Alt & r::Gosub, RestartExplorer
 Alt & k::Gosub, ButtonKillSelectedTask
 Alt & o::Gosub, Open
 Alt & f::
@@ -87,6 +97,34 @@ Return
 
 
 ; Subs
+RestartExplorer:
+	If ProcExist(x)
+		{
+			Sleep, 150
+			While, % ProcExist(x)
+				{
+					Process, Close, %  x
+					Sleep, 1
+				}
+			WinWait, ahk_exe %x%,,10
+			If ErrorLevel
+				{
+					MsgBox,20,Restart Explorer Error,	%	"Explorer.exe could not be started.`n`n"
+																.	"Trying opening manually?"
+					IfMsgBox, Yes
+						Gosub, FileOpen
+					Return
+				}
+		}
+	Else
+		Run, % x
+	SetTimer, CheckX, -4000
+Return
+CheckX:
+	WinActivate, ahk_id %this_id%
+	If ProcExist(x)
+		TrayTip, Task Lister Info, Explorer.exe was restarted successfully.
+Return
 Open:
 	Gui, Submit, NoHide
 	DetectHiddenWindows, On
@@ -101,20 +139,10 @@ Open:
 Return
 ButtonKillSelectedTask:
 	Gui, Submit, NoHide
-	SetTimer, HideCMD, -1
-	ShellExec("taskkill.exe","/im "  Choice " /f")
+	Process, Close, % Choice
 	WinWaitNotActive, ahk_class ConsoleWindowClass
 	Gui, Flash
 	Gosub, RefreshList
-Return
-HideCMD:
-	IfWinExist, ahk_class ConsoleWindowClass
-		{
-			WinHide, ahk_class ConsoleWindowClass
-			SetTimer, HideCMD, Off
-		}
-	Else
-		SetTimer,HideCMD,-1
 Return
 RefreshList:
 	IfWinActive, % "ahk_id " this_id
@@ -138,6 +166,7 @@ RefreshList:
 						{
 							WinActivate, ahk_id %this_id%
 							GuiControl,,ComboBox1, % "|" TaskList(,,1)
+							Gui, Flash
 							SetTimer, TT_FADE_IN, -1
 						}
 					proc:=""
@@ -155,16 +184,20 @@ TT_FADE_IN:
 	tty:=window._y("ahk_id " this_id)+(E1Y-2)
 	WinMove, ahk_class tooltips_class32, ,%ttx% ,%tty%
 	If TT_FADE("in",32)
-		SetTimer,TT_FADE_OUT,-800
+		SetTimer,TT_FADE_OUT_FAST,-800
 Return
-TT_FADE_OUT:
+TT_FADE_OUT_FAST:
 	TT_FADE("out",16)
+Return
+TT_FADE_OUT_SLOW:
+	TT_FADE("out",2)
 Return
 FileOpen:
 	FileSelectFile,file,3, % A_WinDir "\System32"
 	If file
 		{
 			Run, % file
+			Gui, Flash
 			file:=""
 		}
 Return
@@ -176,7 +209,8 @@ Help:
 										.						"Hotkeys" A_Tab "Function`n"
 										.						"-------" A_Tab "--------`n"
 										.						"Alt+K" A_Tab "Kill selected process.`n"
-										.						"Alt+O" A_Tab "Open selected processes folder location.`n`n"
+										.						"Alt+O" A_Tab "Open selected processes folder location.`n`"
+										.						"Alt+R" A_Tab "Restart Windows Explorer.`n`n"
 										.						"Email me with questions or suggestions?"
 	IfMsgBox, Yes
 		Gosub, Email
