@@ -225,9 +225,12 @@ WM_LBUTTONDOWN(){
 	:MouseOver(MP17X,MP17Y,MP17X2,MP17Y2)?3
 	:MouseOver(MP18X,MP18Y,MP18X2,MP18Y2)?2
 	:MouseOver(MP19X,MP19Y,MP19X2,MP19Y2)?8
+	:MouseOver(MP20X,MP20Y,MP20X2,MP20Y2)?9
 	:0
 	If (over == 8)
 		SetTimer, RestartExplorer, -500
+	If (over == 9)
+		SetTimer, FileOpen, -500
 	If (over == 7)
 		{
 			Gui, Flash
@@ -258,6 +261,7 @@ WM_MOUSEHOVER(){
 	:MouseOver(MP18X,MP18Y,MP18X2,MP18Y2)?2
 	:MouseOver(MP19X,MP19Y,MP19X2,MP19Y2)?4
 	:MouseOver(CB1X,CB1Y,CB1X2,CB1Y2)?3
+	:MouseOver(MP20X,MP20Y,MP20X2,MP20Y2)?5
 	:0
 	If (over == 1){
 		SetTimer,TT_OVER_1,-1250
@@ -267,7 +271,10 @@ WM_MOUSEHOVER(){
 	}
 	If (over == 4){
 		SetTimer,TT_OVER_3,-1250
-	}	
+	}
+	If (over == 5){
+		SetTimer,TT_OVER_4,-1250
+	}		
 	If (over != 3)
 		ControlSend, ComboBox1,{Right}, ahk_id %this_id%
 	If !over {	
@@ -322,6 +329,24 @@ TT_OVER_3(){
 					If MouseOver(MP19X,MP19Y,MP19X2,MP19Y2)
 						{
 							ToolTip % "Alt+R"
+							SetTimer, TT_FADE_OUT_SLOW, -3000
+							; Sleep, 3000
+							; ToolTip
+						}
+				}
+		}
+}
+TT_OVER_4(){
+	Global
+	If !WinExist("ahk_class tooltips_class32")
+		{
+			Static c:=0
+			GetControls("Task Lister")
+			If Mod(++c,2)
+				{
+					If MouseOver(MP20X,MP20Y,MP20X2,MP20Y2)
+						{
+							ToolTip % "Alt+U"
 							SetTimer, TT_FADE_OUT_SLOW, -3000
 							; Sleep, 3000
 							; ToolTip

@@ -56,6 +56,7 @@ Gui, Add, ComboBox, xs  Choose1 vChoice w%defaultWidth% 0x1 h250 +ReadOnly, % tl
 Button("0x0D4F82","0x0078D7",defaultWidth,"&Kill Selected Task","Task Lister","FEFEFA",13)
 Button("0x0D4F82","0x0078D7",defaultWidth,"&Open Process Location`n(If possible)","Task Lister","FEFEFA",13)
 Button("0x0D4F82","0x0078D7",defaultWidth,"&Restart Explorer","Task Lister","FEFEFA",13)
+Button("0x0D4F82","0x0078D7",defaultWidth,"R&un File","Task Lister","FEFEFA",13)
 Gui, Show, , Task Lister
 WinSet, TransColor, 0x123456 , Task Lister
 Gui, -Caption +Border
@@ -73,8 +74,9 @@ Return
 ; Hotkeys
 #IfWinActive, Task Lister
 Alt & r::Gosub, RestartExplorer
-Alt & k::Gosub, ButtonKillSelectedTask
 Alt & o::Gosub, Open
+Alt & k::Gosub, ButtonKillSelectedTask
+Alt & u::Gosub, FileOpen
 Alt & f::
 	CoordMode, Mouse, Client
 	MouseMove,%S2X%,%S2Y2%
@@ -210,7 +212,8 @@ Help:
 										.						"-------" A_Tab "--------`n"
 										.						"Alt+K" A_Tab "Kill selected process.`n"
 										.						"Alt+O" A_Tab "Open selected processes folder location.`n`"
-										.						"Alt+R" A_Tab "Restart Windows Explorer.`n`n"
+										.						"Alt+R" A_Tab "Restart Windows Explorer.`n"
+										.						"Alt+U" A_Tab "Run a file.`n`n"
 										.						"Email me with questions or suggestions?"
 	IfMsgBox, Yes
 		Gosub, Email
