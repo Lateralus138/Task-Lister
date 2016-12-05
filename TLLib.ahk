@@ -249,11 +249,13 @@ WM_LBUTTONDOWN(){
 	If (over == 7)
 		{
 			Gui, Flash
-			TT_FADE("Out",16,,"ahk_id " this_id,1)
-			;WinMinimize, ahk_id %this_id%
+			TT_FADE("Out",,,"ahk_exe Task Lister.exe",1)
 		}
 	If (over == 1)
-		Gosub, GuiClose
+		{
+			TT_FADE("Out",4,,"ahk_exe Task Lister.exe",1)
+			Gosub, GuiClose
+		}
 	If (over == 6){
 			MouseMove,%S2X%,%S2Y2%
 			loop, 13
