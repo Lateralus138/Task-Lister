@@ -1,6 +1,7 @@
 ; List all tasks in a Gui with a ComboBox
 
 ; Init
+SetBatchLines, -1
 if not A_IsAdmin
 {
     Run *RunAs "%A_ScriptFullPath%"
@@ -80,13 +81,21 @@ Alt & u::Gosub, FileOpen
 Alt & f::
 	CoordMode, Mouse, Client
 	MouseMove,%S2X%,%S2Y2%
+	loop, 13
+		ToggleSystemCursor(A_Index,true)
 	Menu, MainMenu, Show
+	loop, 13
+		ToggleSystemCursor(A_Index)
 	CoordMode, Mouse, Screen
 Return
 Alt & a::
 	CoordMode, Mouse, Client
 	MouseMove,%S2X%,%S2Y2%
-	Menu, HelpMenu, Show
+	loop, 13
+		ToggleSystemCursor(A_Index,true)
+ 	Menu, HelpMenu, Show
+	loop, 13
+		ToggleSystemCursor(A_Index)
 	CoordMode, Mouse ,Screen
 Return
 ;$Down::Send, {Down}{Home}
@@ -149,35 +158,38 @@ Return
 RefreshList:
 	IfWinActive, % "ahk_id " this_id
 		{
-			exe:=""
-			Gui, Submit, NoHide
-			Loop, Parse, % TaskList(,,1), |
+			If (A_TimeIdlePhysical > 1000)
 				{
-					exe:=(A_LoopField == Choice)?1:0
-					If exe
-						Break
-				}
-			If (!Choice || !exe)
-				{
-					ControlFocus,ComboBox1, ahk_id %this_id%
-					ControlSend, ComboBox1,{Down}, ahk_id %this_id%
-				}
-			If (tl != TaskList(,,1))
-				{
-					IfWinActive, ahk_id %this_id%
+					exe:=""
+					Gui, Submit, NoHide
+					Loop, Parse, % TaskList(,,1), |
 						{
-							WinActivate, ahk_id %this_id%
-							GuiControl,,ComboBox1, % "|" TaskList(,,1)
-							Gui, Flash
-							SetTimer, TT_FADE_IN, -1
+							exe:=(A_LoopField == Choice)?1:0
+							If exe
+								Break
 						}
-					proc:=""
-					proc:=TaskList(,1)
-					tl:=TaskList(,,1)
+					If (!Choice || !exe)
+						{
+							ControlFocus,ComboBox1, ahk_id %this_id%
+							ControlSend, ComboBox1,{Down}, ahk_id %this_id%
+						}
+					If (tl != TaskList(,,1))
+						{
+							IfWinActive, ahk_id %this_id%
+								{
+									WinActivate, ahk_id %this_id%
+									GuiControl,,ComboBox1, % "|" TaskList(,,1)
+									Gui, Flash
+									SetTimer, TT_FADE_IN, -1
+								}
+							proc:=""
+							proc:=TaskList(,1)
+							tl:=TaskList(,,1)
+						}
+					ControlGetFocus,focus, ahk_id %this_id%
+					If (focus != "Edit1")
+						ControlSend, ComboBox1,{Right}, ahk_id %this_id%
 				}
-			ControlGetFocus,focus, ahk_id %this_id%
-			If (focus != "Edit1")
-				ControlSend, ComboBox1,{Right}, ahk_id %this_id%
 		}
 Return
 TT_FADE_IN:
@@ -244,4 +256,7 @@ KillTT:
 	ToolTip
 Return
 GuiClose:
+Loop 13
+	ToggleSystemCursor(A_Index)
+	TT_FADE("Out",,,"ahk_id " this_id,1)
 	ExitApp
