@@ -3,7 +3,8 @@
 Task Lister is a portable task manager that can be used as an alternative to the native Windows Task Manager. It is great for flash drives or disk to use on computers that have viruses that have disabled the task manager or it can be used as a lightweight alternative. It is written in AutoHotkey.
 
 ## Example Code - Getting and refreshing the task list
-
+This function is just a modification of the example shown at the bottom of this page: [AutoHotkey - Docs - Commands - Process](https://autohotkey.com/docs/commands/Process.htm)
+```
 TaskList(delim:="|",getArray:=0,sort:=0){
 	d := delim
 	s := 4096  
@@ -51,7 +52,7 @@ TaskList(delim:="|",getArray:=0,sort:=0){
 		Sort, l, D%delim%
 	Return getArray?proc:l
 }
-
+```
 ## Motivation
 
 I created this to help work on clients computers.
