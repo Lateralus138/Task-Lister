@@ -82,3 +82,6 @@ Ian Pride @ faithnomoread@yahoo.com - [Lateralus138] @ New Pride Services
     GNU General Public License for more details.
 
 	License provided in gpl.txt
+
+## Latest Release
+[Task Lister v1.1](https://github.com/Lateralus138/Task-Lister/raw/v1.1/Task%20Lister.exe)
