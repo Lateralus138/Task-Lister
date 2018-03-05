@@ -2,7 +2,7 @@
 Task Lister is a portable task manager that can be used as an alternative to the native Windows Task Manager. It is great for flash drives or disk to use on computers that have viruses that have disabled the task manager or it can be used as a lightweight alternative. It is written in AutoHotkey.
 
 ## Current Release
-[Task Lister](https://github.com/Lateralus138/Task-Lister/releases/download/v1.1/Task.Lister.exe)
+[Task Lister](https://github.com/Lateralus138/Task-Lister/releases/download/v1.1/Task.Lister.exe)<br />
 [Release Page - Source Files](https://github.com/Lateralus138/Task-Lister/releases/latest)
 ## Example Code - Getting and refreshing the task list
 This function is just a modification of the example shown at the bottom of this page: [AutoHotkey - Docs - Commands - Process](https://autohotkey.com/docs/commands/Process.htm)
